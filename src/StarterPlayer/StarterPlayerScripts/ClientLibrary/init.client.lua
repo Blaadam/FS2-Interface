@@ -8,15 +8,36 @@
 
 --// Services
 local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
 
 --// Variables
 local Player = Players.LocalPlayer
-local Interface = Player.PlayerGui:WaitForChild("MainMenu")
+local MainMenu = Player.PlayerGui:WaitForChild("MainMenu")
+
+local Library = {
+    LoadingCore = require(script:WaitForChild("Interface"):WaitForChild("LoadingCore"))
+}
 
 --// Functions
 
-function LoadingInterface()
-    
+function DBG(Message, Warning)
+    if not RunService:IsStudio() then
+        return false
+    end
+
+    if Warning then
+        warn(Message)
+    else
+        print(Message)
+    end
+    return true
 end
 
 --// Execution
+
+DBG("CLIENT INITIALISATION BEGUN", true)
+
+Library.LoadingCore:Initialise()
+DBG("LoadingCore initialised")
+
+DBG("CLIENT INITIALISED SUCCESSFULLY", true)
