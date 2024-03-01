@@ -15,7 +15,8 @@ local Player = Players.LocalPlayer
 local MainMenu = Player.PlayerGui:WaitForChild("MainMenu")
 
 local Library = {
-    LoadingCore = require(script:WaitForChild("Interface"):WaitForChild("LoadingCore"))
+    LoadingCore = require(script:WaitForChild("Interface"):WaitForChild("LoadingCore")),
+    ServerBrowser = require(script.Interface:WaitForChild("ServerBrowser"))
 }
 
 --// Functions
@@ -39,5 +40,7 @@ DBG("CLIENT INITIALISATION BEGUN", true)
 
 Library.LoadingCore:Initialise()
 DBG("LoadingCore initialised")
+Library.ServerBrowser:Initialise()
+DBG("ServerBrowser initialised")
 
 DBG("CLIENT INITIALISED SUCCESSFULLY", true)
