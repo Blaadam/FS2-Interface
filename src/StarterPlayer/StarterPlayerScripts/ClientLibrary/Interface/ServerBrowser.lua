@@ -3,6 +3,7 @@ local Browser = {}
 --// Services
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 
 --// Variables
 local SharedLibrary = ReplicatedStorage:WaitForChild("SharedLibrary")
@@ -28,7 +29,13 @@ local Servers = {}
 
 --// Functions
 function PlayGame(PlaceID, ServerID)
-	
+	GetServerData:InvokeServer({
+        Request = "Join",
+        Data = {
+            PlaceId = PlaceID,
+            ServerId = ServerID
+        }
+    })
 end
 
 function OpenGameBrowser(TileName, TileData)
@@ -38,7 +45,12 @@ end
 function RefreshGames()
 	Maid:DoCleaning()
     for TileName, TileData in pairs(Library.ServerTiles) do
-        local PlaceInfo = GetServerData:InvokeServer("GetServers", TileData.PlaceId)
+        local PlaceInfo = GetServerData:InvokeServer({
+            Request = "GetServers",
+            Data = {
+                PlaceId = TileData.PlaceId
+            }
+        })
         Servers[TileName] = PlaceInfo
 
         local Tile = GameOptions:FindFirstChild(TileName)
@@ -52,9 +64,9 @@ function RefreshGames()
         Tile:WaitForChild("GameTitle").Text = TileData.Name
 		Tile:WaitForChild("GameDesc").Text = TileData.Desc
 		
-		if not Servers[TileName] then continue end
+		if (not Servers[TileName]) and (not RunService:IsStudio()) then continue end
 		
-		Tile.Online.Text = Servers[TileName].CurrentPlayers
+		Tile.Online.Text = tostring(Servers[TileName].CurrentPlayers or 0).." Online"
 		
 		Maid:GiveTask(Tile.Play.Activated:Connect(function()
             PlayGame(TileData.PlaceId)

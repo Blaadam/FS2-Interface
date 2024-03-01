@@ -7,6 +7,7 @@
 ]]
 
 --// Services
+local RunService = game:GetService("RunService")
 local ServerScriptService = game:GetService("ServerScriptService")
 local Players = game:GetService("Players")
 local CollectionService = game:GetService("CollectionService")
@@ -17,10 +18,23 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerLibrary = ServerScriptService:WaitForChild("ServerLibrary")
 
 local Library = {
-    
+    RequestHandler = require(ServerLibrary:WaitForChild("General"):WaitForChild("RequestHandler"))
 }
 
 --// Functions
+
+function DBG(Message, Warning)
+    if not RunService:IsStudio() then
+        return false
+    end
+
+    if Warning then
+        warn(Message)
+    else
+        print(Message)
+    end
+    return true
+end
 
 function PlayerJoined(Player)
     
@@ -34,3 +48,12 @@ end
 
 Players.PlayerAdded:Connect(PlayerJoined)
 Players.PlayerRemoving:Connect(PlayerLeft)
+
+--// Initialisation
+
+DBG("SERVER INITIALISATION BEGUN", true)
+
+Library.RequestHandler:Initialise()
+DBG("RequestHandler initialised")
+
+DBG("SERVER INITIALISED SUCCESSFULLY", true)

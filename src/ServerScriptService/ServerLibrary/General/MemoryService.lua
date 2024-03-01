@@ -38,7 +38,7 @@ local SortedMaps = {}
 local Queues = {}
 local PlayerDebounce = {}
 local PlayerActiveQueue = {}
-local Moderators = require(script.Moderator)
+local Moderators = require(SharedLibrary.General:WaitForChild("Moderators"))
 
 local VersionControl = "Test0_"
 local ServerTiles = require(SharedLibrary.General:WaitForChild("ServerTiles"))
@@ -172,33 +172,22 @@ function canJoinServer(Player, Server)
 	return can
 end
 
-function isBooster(Player)
-	if
-		game:GetService("HttpService"):GetAsync("http://45.55.47.67:3000/boost/" .. tostring(Player.UserId)) == "true"
-	then
-		return true
-	end
-end
-
 function GetPriorityLevel(Player)
 	local PriorityLevel = {
 		Regular = 0,
-		Nitro = 1,
-		QA = 2,
-		Developer = 3,
+		QA = 1,
+		Developer = 2,
 	}
 
 	local Priority = PriorityLevel.Regular
 
-	if isBooster(Player) then
-		Priority = PriorityLevel.Nitro
-	end
-	if Player:GetRankInGroup(9836366) == 100 then
-		Priority = PriorityLevel.QA
-	end
-	if Player:GetRankInGroup(2803381) >= 40 then
-		Priority = PriorityLevel.Developer
-	end
+	pcall(function()
+		if Player:GetRankInGroup(7132841) >= 250 then
+			Priority = PriorityLevel.Developer
+		elseif Player:GetRankInGroup(7132841) >= 18 then
+			Priority = PriorityLevel.QA
+		end
+	end)
 
 	return Priority
 end
@@ -206,25 +195,9 @@ end
 function GetPlaceData(PlaceId)
 	local returnData = nil
 
-	for Section, Data in pairs(ServerTiles) do
-		if returnData == nil then
-			if Section == "Main Game" then
-				if PlaceId == Data.PlaceId then
-					returnData = Data
-				end
-			else
-				for Tile, TileData in pairs(Data) do
-					if TileData.Replacement and TileData.PlaceId ~= PlaceId then
-						if TileData.Replacement.PlaceId == PlaceId then
-							returnData = TileData.Replacement
-						end
-					else
-						if TileData.PlaceId == PlaceId then
-							returnData = TileData
-						end
-					end
-				end
-			end
+	for TileName, TileData in pairs(ServerTiles) do
+		if TileData.PlaceId == PlaceId then
+			returnData = TileData
 		end
 	end
 
