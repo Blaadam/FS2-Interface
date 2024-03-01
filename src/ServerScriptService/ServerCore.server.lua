@@ -57,3 +57,11 @@ Library.RequestHandler:Initialise()
 DBG("RequestHandler initialised")
 
 DBG("SERVER INITIALISED SUCCESSFULLY", true)
+
+game:BindToClose(function()
+    local c = 0
+    repeat
+        task.wait(1)
+        c = c + 1
+    until c > 20
+end)
