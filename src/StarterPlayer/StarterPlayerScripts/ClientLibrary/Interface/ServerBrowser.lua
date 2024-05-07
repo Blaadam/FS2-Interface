@@ -38,8 +38,9 @@ function PlayGame(PlaceID, ServerID)
     })
 end
 
-function OpenGameBrowser(TileName, TileData)
+function OpenGameBrowser(TileName, PlaceInfo)
 	Maid:DoCleaning()
+    print(PlaceInfo)
 end
 
 function RefreshGames()
@@ -73,7 +74,7 @@ function RefreshGames()
         end))
 
         Maid:GiveTask(Tile.Servers.Activated:Connect(function()
-            OpenGameBrowser(TileName, TileData)
+            OpenGameBrowser(TileName, Servers[TileName])
         end))
     end
 end

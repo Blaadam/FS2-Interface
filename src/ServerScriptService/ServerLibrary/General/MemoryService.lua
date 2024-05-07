@@ -75,13 +75,10 @@ function GetSortedMap(PlaceId)
 end
 
 function GetQueue(PlaceId, ServerId)
-	warn(0.2)
 	local Queue = nil
 	if Queues[PlaceId .. "_" .. ServerId] then
-		warn(0.3)
 		Queue = Queues[PlaceId .. "_" .. ServerId]
 	else
-		warn(0.4)
 		Queues[PlaceId .. "_" .. ServerId] = MemoryStoreService:GetQueue(PlaceId .. "_" .. ServerId, 30)
 		Queue = Queues[PlaceId .. "_" .. ServerId]
 	end
@@ -310,60 +307,43 @@ end
 
 --// Module Functions
 function Lib:JoinServerById(Player, PlaceId, ServerId)
-	warn(1)
 	if PlayerDebounce[Player.UserId] == true then
 		return
 	end
-	warn(2)
 	PlayerDebounce[Player.UserId] = true
-	warn(3)
 
 	local ServerData = GetServerData(PlaceId, ServerId)
 
-	warn(4)
 	if ServerData then
-		warn(5)
 		if canJoinServer(Player, ServerData) then
-			warn(6)
 			local function transformFunction(oldValue)
 				return ServerData
 			end
-			warn(7)
+			
 			ServerData.CurrentPlayers = GetPlayers(PlaceId, ServerId)
-			warn(8)
-			if table.find(ServerData.CurrentPlayers, Player.UserId) then
-				-- do nthng
-				warn(9)
-			else
+
+			if not (table.find(ServerData.CurrentPlayers, Player.UserId)) then
 				table.insert(ServerData.CurrentPlayers, Player.UserId)
-				--UpdatePlayers(PlaceId,ServerId,ServerData.CurrentPlayers)
-				warn(10)
 			end
 			ServerData.CurrentPlayers = {}
-			warn(11)
 			GetSortedMap(PlaceId):UpdateAsync(ServerData.ServerId, transformFunction, ServerRefreshRate)
-			warn(12)
 			TeleportService:TeleportToPrivateServer(PlaceId, ServerData.ReserveCode, { Player })
-			print(13)
+
 			task.delay(5, function()
 				PlayerDebounce[Player.UserId] = nil
 			end)
-			print(14)
+			
 			return "Success"
 		else
-			print(15)
 			local Queued = JoinServerQueue(Player, PlaceId, ServerId)
-			print(16)
+			
 			if Queued == true then
-				print(17)
 				return "Server is full. Pending in queue. " .. GetPriorityLevel(Player)
 			else
-				print(18)
 				return "Server is full. Could not queue."
 			end
 		end
 	else
-		print(19)
 		return "No Server Found"
 	end
 end
@@ -377,7 +357,6 @@ function Lib:JoinServer(Player, PlaceId)
 	local PlaceInfo = GetPlaceData(PlaceId)
 
 	if PlaceInfo.MaxPlayers == 1 then
-		print(1)
 		CreateServer(Player, PlaceId)
 		task.delay(30, function()
 			PlayerDebounce[Player.UserId] = nil
@@ -419,7 +398,6 @@ function Lib:JoinServer(Player, PlaceId)
 				end)
 				return "Success"
 			else
-				print(2)
 				ServerData = CreateServer(Player, PlaceId)
 				GetSortedMap(PlaceId):SetAsync(
 					ServerData.ServerId,
@@ -433,7 +411,6 @@ function Lib:JoinServer(Player, PlaceId)
 				return "Success"
 			end
 		else
-			print(3)
 			ServerData = CreateServer(Player, PlaceId)
 			GetSortedMap(PlaceId):SetAsync(
 				ServerData.ServerId,
@@ -450,7 +427,6 @@ function Lib:JoinServer(Player, PlaceId)
 end
 
 function Lib:CreateServer(Player, PlaceId)
-	print(5)
 	if PlayerDebounce[Player.UserId] == true then
 		return
 	end
